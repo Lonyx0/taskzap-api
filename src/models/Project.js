@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 
 const ProjectSchema = new mongoose.Schema({
-    owner_id : {
-        type: mongoose.Schema.Types.ObjectId,
-        required: false,
-        ref: 'User'
-    },
+    
     name: {
         type: String,
         required: [true, 'Project name is required'],
@@ -28,9 +24,25 @@ const ProjectSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-},
-{    timestamps: true
-}
+    members: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+          required: true,
+        },
+        role: {
+          type: String,
+          required: true,
+          enum: ['Proje Yöneticisi', 'Proje Üyesi', 'İzleyici'],
+          default: 'İzleyici',
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
 );
 
 module.exports = mongoose.model('Project', ProjectSchema);

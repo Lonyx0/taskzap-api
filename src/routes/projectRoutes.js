@@ -7,8 +7,16 @@ const {
   createProject,
   getProjectById,
   updateProject,
-  deleteProject
+  deleteProject,
+  addProjectMember,
+  updateMemberRole,
+  removeProjectMember
 } = require('../controllers/projectController.js');
+
+const {
+  getTasksForProject,
+  createTaskForProject
+} = require('../controllers/taskController');
 
 const { protect } = require('../middleware/authMiddleware');
 
@@ -26,5 +34,20 @@ router
   .get(protect, getProjectById)   // Tek proje getir
   .put(protect, updateProject)    // Projeyi güncelle
   .delete(protect, deleteProject); // Projeyi sil
+
+router
+  .route('/:id/members')
+  .post(protect, addProjectMember);
+
+// /api/projects/:id/members/:memberId
+router
+  .route('/:id/members/:memberId')
+  .put(protect, updateMemberRole)
+  .delete(protect, removeProjectMember);
+
+router
+  .route('/:projectId/tasks')
+  .get(protect, getTasksForProject)
+  .post(protect, createTaskForProject);
 
 module.exports = router;

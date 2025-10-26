@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const projectRoutes = require('./routes/projectRoutes');
 const authRoutes = require('./routes/authRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 
 // Ortam değişkenlerini yükle
 dotenv.config();
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 // app.use('/api/projects', require('./routes/projectRoutes'));
 app.use('/api/projects', projectRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
 
 
 const PORT = process.env.PORT || 3000;

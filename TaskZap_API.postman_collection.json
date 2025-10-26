@@ -1,0 +1,561 @@
+{
+	"info": {
+		"_postman_id": "taskzap-api-collection",
+		"name": "TaskZap API",
+		"description": "TaskZap - Proje ve Görev Yönetim API'si için Postman Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('authToken', jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Eren Altay\",\n  \"email\": \"eren@example.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Yeni kullanıcı kaydı oluşturur ve JWT token döner."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('authToken', jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"eren@example.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Mevcut kullanıcı ile giriş yapar ve JWT token döner."
+					},
+					"response": []
+				}
+			],
+			"description": "Kullanıcı kimlik doğrulama işlemleri"
+		},
+		{
+			"name": "Projects",
+			"item": [
+				{
+					"name": "Get All Projects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/projects",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"projects"
+							]
+						},
+						"description": "Kullanıcının erişebildiği tüm projeleri listeler."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Project by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/projects/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"projects",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "PROJECT_ID",
+									"description": "Proje ID"
+								}
+							]
+						},
+						"description": "Belirli bir projenin detaylarını getirir."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('projectId', jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Yeni Proje\",\n  \"description\": \"Bu proje açıklaması\",\n  \"status\": \"not started\",\n  \"start_date\": \"2025-01-01\",\n  \"end_date\": \"2025-12-31\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/projects",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"projects"
+							]
+						},
+						"description": "Yeni bir proje oluşturur. Proje oluşturan kişi otomatik olarak 'Proje Yöneticisi' rolüyle eklenir."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Project",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Güncellenmiş Proje Adı\",\n  \"description\": \"Güncellenmiş açıklama\",\n  \"status\": \"in progress\",\n  \"start_date\": \"2025-01-01\",\n  \"end_date\": \"2025-12-31\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/projects/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"projects",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "PROJECT_ID",
+									"description": "Proje ID"
+								}
+							]
+						},
+						"description": "Mevcut bir projeyi günceller."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Project",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/projects/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"projects",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "PROJECT_ID",
+									"description": "Proje ID"
+								}
+							]
+						},
+						"description": "Bir projeyi siler."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Project Member",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"USER_ID\",\n  \"role\": \"Proje Üyesi\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/projects/:id/members",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"projects",
+								":id",
+								"members"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "PROJECT_ID",
+									"description": "Proje ID"
+								}
+							]
+						},
+						"description": "Projeye yeni üye ekler. Roller: 'Proje Yöneticisi', 'Proje Üyesi', 'İzleyici'"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Member Role",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"role\": \"Proje Yöneticisi\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/projects/:id/members/:memberId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"projects",
+								":id",
+								"members",
+								":memberId"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "PROJECT_ID",
+									"description": "Proje ID"
+								},
+								{
+									"key": "memberId",
+									"value": "USER_ID",
+									"description": "Üye ID"
+								}
+							]
+						},
+						"description": "Proje üyesinin rolünü günceller."
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Project Member",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/projects/:id/members/:memberId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"projects",
+								":id",
+								"members",
+								":memberId"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "PROJECT_ID",
+									"description": "Proje ID"
+								},
+								{
+									"key": "memberId",
+									"value": "USER_ID",
+									"description": "Üye ID"
+								}
+							]
+						},
+						"description": "Projeden üye çıkarır."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Project Tasks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/projects/:projectId/tasks",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"projects",
+								":projectId",
+								"tasks"
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "PROJECT_ID",
+									"description": "Proje ID"
+								}
+							]
+						},
+						"description": "Belirli bir projeye ait tüm görevleri listeler."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Task for Project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('taskId', jsonData._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Yeni Görev\",\n  \"description\": \"Görev açıklaması\",\n  \"status\": \"Yapılacak\",\n  \"priority\": \"Yüksek\",\n  \"due_date\": \"2025-11-30\",\n  \"assigned_to_id\": \"USER_ID\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/projects/:projectId/tasks",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"projects",
+								":projectId",
+								"tasks"
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "PROJECT_ID",
+									"description": "Proje ID"
+								}
+							]
+						},
+						"description": "Belirli bir proje için yeni görev oluşturur."
+					},
+					"response": []
+				}
+			],
+			"description": "Proje yönetimi işlemleri"
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Get Task by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tasks/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "TASK_ID",
+									"description": "Görev ID"
+								}
+							]
+						},
+						"description": "Belirli bir görevin detaylarını getirir."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Task",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Güncellenmiş Görev\",\n  \"description\": \"Güncellenmiş açıklama\",\n  \"status\": \"Üzerinde Çalışılıyor\",\n  \"priority\": \"Orta\",\n  \"due_date\": \"2025-12-15\",\n  \"assigned_to_id\": \"USER_ID\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tasks/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "TASK_ID",
+									"description": "Görev ID"
+								}
+							]
+						},
+						"description": "Mevcut bir görevi günceller."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Task",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tasks/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tasks",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "TASK_ID",
+									"description": "Görev ID"
+								}
+							]
+						},
+						"description": "Bir görevi siler."
+					},
+					"response": []
+				}
+			],
+			"description": "Görev yönetimi işlemleri"
+		}
+	]
+}
